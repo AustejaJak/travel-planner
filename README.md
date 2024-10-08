@@ -56,22 +56,14 @@ The purpose of this Travel Planning System is to provide a comprehensive, user-f
 
 ## Documentation
 ### Docker
-There is a network that contains two containers. One container has MySQL image and the other phpMyAdmin image. To run the docker containers execute file ```
-docker-compose.yml
-```.
+#### Running Docker Containers with Docker Compose
 
-Terminal code to execute docker-compose.yml file:
-```
+There is a network that contains two containers: one with the MySQL image and the other with the phpMyAdmin image. To run the Docker containers, execute the file `docker-compose.yml`.
+
+#### To Execute `docker-compose.yml` File
+
+Use the following command in the terminal:
+
+```bash
 docker-compose up -d
-```
-or
-
-```
-docker-compose start
-```
-
-Terminal code to stop the containers:
-```
-docker-compose stop
-```
 
