@@ -54,3 +54,24 @@ The purpose of this Travel Planning System is to provide a comprehensive, user-f
 - Server: Docker.
 
 
+## Documentation
+### Docker
+There is a network that contains two containers. One container has MySQL image and the other phpMyAdmin image. To run the docker containers execute file ```
+docker-compose.yml
+```.
+
+Terminal code to execute docker-compose.yml file:
+```
+docker-compose up -d
+```
+or
+
+```
+docker-compose start
+```
+
+Terminal code to stop the containers:
+```
+docker-compose stop
+```
+
