@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {}
+    "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {}
   },
   "projects": {
-    "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {
+    "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
+        "projectUniqueName": "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
         "projectName": "TravelPlannerAPI",
-        "projectPath": "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
+        "projectPath": "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
         "packagesPath": "C:\\Users\\auste\\.nuget\\packages\\",
-        "outputPath": "c:\\travelplanner\\TravelPlannerAPI\\obj\\",
+        "outputPath": "C:\\travelplanner\\TravelPlannerAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\auste\\AppData\\Roaming\\NuGet\\NuGet.Config",

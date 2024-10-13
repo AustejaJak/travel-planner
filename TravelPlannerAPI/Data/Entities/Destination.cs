@@ -5,5 +5,5 @@ public class Destination
     public required string EndLocation { get; set; }
     public required DateTime CreationDate { get; set; }
 
-    public required Trip Trip { get;set; }
+    public required Trip Trip { get; set; }
 }
