@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {}
+    "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {}
   },
   "projects": {
-    "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {
+    "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
+        "projectUniqueName": "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
         "projectName": "TravelPlannerAPI",
-        "projectPath": "C:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
+        "projectPath": "c:\\travelplanner\\TravelPlannerAPI\\TravelPlannerAPI.csproj",
         "packagesPath": "C:\\Users\\auste\\.nuget\\packages\\",
-        "outputPath": "C:\\travelplanner\\TravelPlannerAPI\\obj\\",
+        "outputPath": "c:\\travelplanner\\TravelPlannerAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\auste\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -82,7 +82,7 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.8.1, )"
             }
           },
           "imports": [
