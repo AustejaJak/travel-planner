@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TravelPlannerAPI.Auth.Model;
 
-public class TravelDbContext : DbContext
+public class TravelDbContext : IdentityDbContext<TravelMember>
 {
     private readonly IConfiguration _configuration;
     public DbSet<Trip> Trips { get; set; }

@@ -89,7 +89,8 @@ public class ActivitiesController : ControllerBase
             StartTime = createActivityDto.StartTime,
             EndTime = createActivityDto.EndTime,
             CreationDate = DateTime.UtcNow,
-            Destination = destination
+            Destination = destination,
+            UserId = ""
         };
 
         _dbContext.Activities.Add(activity);

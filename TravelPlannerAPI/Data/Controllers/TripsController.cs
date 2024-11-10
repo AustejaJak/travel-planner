@@ -79,7 +79,8 @@ public class TripsController : ControllerBase
             Description = createTripDto.Description,
             TripStart = createTripDto.TripStart,
             TripEnd = createTripDto.TripEnd,
-            CreationDate = DateTime.UtcNow
+            CreationDate = DateTime.UtcNow,
+            UserId = ""
         };
 
         _dbContext.Trips.Add(trip);

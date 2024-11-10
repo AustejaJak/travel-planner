@@ -79,7 +79,8 @@ public class DestinationsController : ControllerBase
             StartLocation = createDestinationDto.StartLocation,
             EndLocation = createDestinationDto.EndLocation,
             CreationDate = DateTime.UtcNow,
-            Trip = trip
+            Trip = trip,
+            UserId = ""
         };
 
         _dbContext.Destinations.Add(destination);
