@@ -54,7 +54,7 @@ The purpose of this Travel Planning System is to provide a comprehensive, user-f
 - Server: Docker.
 
 
-## Documentation
+# Documentation
 ### Docker
 #### Running Docker Containers with Docker Compose
 
@@ -66,10 +66,204 @@ Use the following command in the terminal:
 
 ```bash
 docker-compose up -d
+```
 
-### OpenAPI code documentation
+## Controllers
+This documentation will specify only `TripsController` as other controllers are based on this class, page pagination and error handling. All controllers ar hierarchical.
+
+## Table of Contents
+- [Overview](#overview)
+- [Endpoints](#endpoints)
+  - [GetTrips](#gettrips)
+  - [GetTrip](#gettrip)
+  - [CreateTrip](#createtrip)
+  - [EditTrip](#edittrip)
+  - [DeleteTrip](#deletetrip)
+- [Models](#models)
+- [Pagination Metadata](#pagination-metadata)
+- [Error Handling](#error-handling)
+
+## Overview
+
+The `TripsController` exposes RESTful endpoints for managing trips. It supports pagination for trip listings and provides links to resources for easy navigation.
+
+## Endpoints
+
+### GetTrips
+
+- **URL:** `/api/v1/trips`
+- **Method:** `GET`
+- **Query Parameters:**
+  - `pageNumber` (int, required): The page number to retrieve.
+  - `pageSize` (int, required): The number of trips per page.
+
+- **Description:** Retrieves a paginated list of trips sorted by creation date.
+
+- **Response:**
+  - **Status Code:** `200 OK`
+  - **Body:**
+    ```json
+    [
+      {
+        "id": 1,
+        "name": "Trip to the mountains",
+        "description": "A relaxing trip to the mountains.",
+        "tripStart": "2024-01-01T00:00:00Z",
+        "tripEnd": "2024-01-07T00:00:00Z",
+        "creationDate": "2023-12-01T12:00:00Z"
+      }
+    ]
+    ```
+
+### GetTrip
+
+- **URL:** `/api/v1/trips/{tripId}`
+- **Method:** `GET`
+- **Path Parameters:**
+  - `tripId` (int, required): The ID of the trip to retrieve.
+
+- **Description:** Retrieves a specific trip by its ID.
+
+- **Response:**
+  - **Status Code:** `200 OK`
+  - **Body:**
+    ```json
+    {
+      "id": 1,
+      "name": "Trip to the mountains",
+      "description": "A relaxing trip to the mountains.",
+      "tripStart": "2024-01-01T00:00:00Z",
+      "tripEnd": "2024-01-07T00:00:00Z",
+      "creationDate": "2023-12-01T12:00:00Z"
+    }
+    ```
+
+### CreateTrip
+
+- **URL:** `/api/v1/trips`
+- **Method:** `POST`
+- **Body:**
+  ```json
+  {
+    "name": "Trip to the beach",
+    "description": "A fun trip to the beach.",
+    "tripStart": "2024-01-15T00:00:00Z",
+    "tripEnd": "2024-01-20T00:00:00Z"
+  }
+
+### EditTrip
+
+- **URL:** `/api/v1/trips/{tripId}`
+- **Method:** `PUT`
+- **Path Parameters:**
+  - `tripId` (int, required): The ID of the trip to update.
+
+- **Request Body:**
+  ```json
+  {
+    "name": "Updated Trip Name",
+    "description": "Updated description.",
+    "tripStart": "2024-01-01T00:00:00Z",
+    "tripEnd": "2024-01-10T00:00:00Z"
+  }
+
+### DeleteTrip
+
+- **URL:** `/api/v1/trips/{tripId}`
+- **Method:** `DELETE`
+- **Path Parameters:**
+  - `tripId` (int, required): The ID of the trip to delete.
+
+- **Description:** Deletes a trip by its ID.
+
+- **Response:**
+  - **Status Code:** `204 No Content`
+
+### Example Response
+
+- If the deletion is successful, there will be no content in the response body.
+
+```http
+HTTP/1.1 204 No Content
+```
+
+## Models
+
+### TripDtoInitial
+
+- **Description:** Represents the data of a trip when retrieved from the API.
+- **Properties:**
+  - `id` (int): The unique identifier of the trip.
+  - `name` (string): The name of the trip.
+  - `description` (string): A brief description of the trip.
+  - `tripStart` (DateTime): The start date and time of the trip.
+  - `tripEnd` (DateTime): The end date and time of the trip.
+  - `creationDate` (DateTime): The date and time when the trip was created.
+
+#### Example
+
+```json
+{
+  "id": 1,
+  "name": "Trip to the beach",
+  "description": "A fun trip to the beach.",
+  "tripStart": "2024-01-15T00:00:00Z",
+  "tripEnd": "2024-01-20T00:00:00Z",
+  "creationDate": "2023-12-01T12:00:00Z"
+}
 
 ```
+
+## Pagination Metadata
+
+- **Description:** Represents metadata for paginated responses in the API.
+- **Properties:**
+  - `totalCount` (int): The total number of trips available.
+  - `pageSize` (int): The number of trips returned per page.
+  - `currentPage` (int): The current page number in the pagination.
+  - `totalPages` (int): The total number of pages available based on the `totalCount` and `pageSize`.
+  - `previousPageLink` (string, nullable): A link to the previous page (if available).
+  - `nextPageLink` (string, nullable): A link to the next page (if available).
+
+### Example
+
+```json
+{
+  "totalCount": 100,
+  "pageSize": 5,
+  "currentPage": 1,
+  "totalPages": 20,
+  "previousPageLink": null,
+  "nextPageLink": "/api/v1/trips?pageNumber=2&pageSize=5"
+}
+```
+
+## Error Handling
+
+- **Description:** The API utilizes standard HTTP status codes to indicate the success or failure of requests. Detailed error messages are returned in the response body for various types of errors, allowing clients to understand the issues encountered.
+
+### Common HTTP Status Codes
+
+- **400 Bad Request:** Indicates that the request was malformed or contained validation errors.
+
+#### Example Response
+
+```json
+{
+  "errors": {
+    "Name": [
+      "The Name field is required."
+    ],
+    "TripStart": [
+      "The TripStart field must be a valid date."
+    ]
+  }
+}
+```
+
+### Travel Planner OpenAPI Documentation
+
+```json
 {
   "openapi": "3.0.1",
   "info": {
@@ -508,154 +702,6 @@ docker-compose up -d
           }
         }
       }
-    },
-    "/api/v1/Trips": {
-      "get": {
-        "tags": [
-          "Trips"
-        ],
-        "operationId": "GetTrips",
-        "parameters": [
-          {
-            "name": "PageNumber",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "PageSize",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Trips"
-        ],
-        "operationId": "CreateTrip",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTripDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTripDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTripDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/v1/Trips/{tripId}": {
-      "get": {
-        "tags": [
-          "Trips"
-        ],
-        "operationId": "GetTrip",
-        "parameters": [
-          {
-            "name": "tripId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Trips"
-        ],
-        "operationId": "EditTrip",
-        "parameters": [
-          {
-            "name": "tripId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTripDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTripDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTripDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Trips"
-        ],
-        "operationId": "DeleteTrip",
-        "parameters": [
-          {
-            "name": "tripId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -663,118 +709,76 @@ docker-compose up -d
       "CreateActivityDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
+          "Name": {
+            "type": "string"
           },
-          "type": {
-            "type": "string",
-            "nullable": true
+          "Description": {
+            "type": "string"
           },
-          "startTime": {
-            "type": "string",
-            "format": "date-span"
+          "Price": {
+            "type": "number",
+            "format": "double"
           },
-          "endTime": {
-            "type": "string",
-            "format": "date-span"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreateDestinationDto": {
-        "type": "object",
-        "properties": {
-          "startLocation": {
-            "type": "string",
-            "nullable": true
-          },
-          "endLocation": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreateTripDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "tripStart": {
+          "StartDate": {
             "type": "string",
             "format": "date-time"
           },
-          "tripEnd": {
+          "EndDate": {
             "type": "string",
             "format": "date-time"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "UpdateActivityDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
+          "Name": {
+            "type": "string"
           },
-          "type": {
-            "type": "string",
-            "nullable": true
+          "Description": {
+            "type": "string"
           },
-          "startTime": {
-            "type": "string",
-            "format": "date-span"
+          "Price": {
+            "type": "number",
+            "format": "double"
           },
-          "endTime": {
+          "StartDate": {
             "type": "string",
-            "format": "date-span"
+            "format": "date-time"
+          },
+          "EndDate": {
+            "type": "string",
+            "format": "date-time"
           }
-        },
-        "additionalProperties": false
+        }
+      },
+      "CreateDestinationDto": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "Country": {
+            "type": "string"
+          },
+          "City": {
+            "type": "string"
+          }
+        }
       },
       "UpdateDestinationDto": {
         "type": "object",
         "properties": {
-          "startLocation": {
-            "type": "string",
-            "nullable": true
+          "Name": {
+            "type": "string"
           },
-          "endLocation": {
-            "type": "string",
-            "nullable": true
+          "Country": {
+            "type": "string"
+          },
+          "City": {
+            "type": "string"
           }
-        },
-        "additionalProperties": false
-      },
-      "UpdateTripDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "tripStart": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "tripEnd": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
+        }
       }
     }
   }
