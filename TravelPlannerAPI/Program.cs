@@ -36,6 +36,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddTransient<JwtTokenService>();
+builder.Services.AddTransient<SessionService>();
 builder.Services.AddScoped<AuthSeeder>();
 
 builder.Services.AddIdentity<TravelMember, IdentityRole>().AddEntityFrameworkStores<TravelDbContext>()
@@ -79,8 +80,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
-
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();

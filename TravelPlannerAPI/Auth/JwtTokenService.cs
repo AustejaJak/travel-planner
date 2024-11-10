@@ -19,7 +19,7 @@ public class JwtTokenService
         _audience = configuration["JWT:ValidAudience"];
     }
 
-    public string CreateAcessToken(string userName, string UserId, IEnumerable<string> roles)
+    public string CreateAccessToken(string userName, string UserId, IEnumerable<string> roles)
     {
         var authClaims = new List<Claim>
         {
@@ -39,5 +39,47 @@ public class JwtTokenService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+    public string CreateRefreshToken(Guid sessionId, string UserId, DateTime expires)
+    {
+        var authClaims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, UserId),
+            new("SessionId", sessionId.ToString())
+        };
+        
+        var token = new JwtSecurityToken(
+            issuer: _issuer,
+            audience: _audience,
+            expires: expires,
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(_authSigningKey, SecurityAlgorithms.HmacSha256)
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public bool TryParseRefreshToken(string refreshToken, out ClaimsPrincipal? claims)
+    {
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler() { MapInboundClaims = false };
+            var validationParameters = new TokenValidationParameters()
+            {
+                ValidIssuer = _issuer,
+                ValidAudience = _audience,
+                IssuerSigningKey = _authSigningKey,
+                ValidateLifetime = true
+            };
+
+            claims = tokenHandler.ValidateToken(refreshToken, validationParameters, out var _);
+            return true;
+        }
+        catch
+        {
+            claims = null;
+            return false;
+        }
     }
 }

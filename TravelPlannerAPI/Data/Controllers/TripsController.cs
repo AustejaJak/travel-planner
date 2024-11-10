@@ -1,8 +1,12 @@
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 using O9d.AspNet.FluentValidation;
+using TravelPlannerAPI.Auth.Model;
 using TravelPlannerAPI.Helpers;
 using static TripDto;
 
@@ -21,6 +25,7 @@ public class TripsController : ControllerBase
     // GET: api/v1/trips
     // /posts?pageNumber=1&pageSize=5
     [HttpGet(Name = "GetTrips")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetTrips([FromQuery] SearchParameters searchParameters, LinkGenerator linkGenerator)
     {
         var queryable = _dbContext.Trips.AsQueryable().OrderBy(o => o.CreationDate);
@@ -47,6 +52,7 @@ public class TripsController : ControllerBase
 
     // GET: api/v1/trips/{tripId}
     [HttpGet("{tripId}", Name = "GetTrip")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetTripById(int tripId)
     {
         var trip = await _dbContext.Trips
@@ -63,6 +69,7 @@ public class TripsController : ControllerBase
 
     // POST: api/v1/trips
     [HttpPost(Name = "CreateTrip")]
+    [Authorize(Roles = TravelRoles.TravelMember)]
     public async Task<IActionResult> CreateTrip([Validate] CreateTripDto createTripDto, LinkGenerator linkGenerator)
     {
 
@@ -80,7 +87,7 @@ public class TripsController : ControllerBase
             TripStart = createTripDto.TripStart,
             TripEnd = createTripDto.TripEnd,
             CreationDate = DateTime.UtcNow,
-            UserId = ""
+            UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
         };
 
         _dbContext.Trips.Add(trip);
@@ -97,6 +104,7 @@ public class TripsController : ControllerBase
 
     // PUT: api/v1/trips/{tripId}
     [HttpPut("{tripId}", Name = "EditTrip")]
+    [Authorize]
     public async Task<IActionResult> UpdateTrip(int tripId, [Validate] UpdateTripDto updateTripDto)
     {
 
@@ -114,6 +122,11 @@ public class TripsController : ControllerBase
             return NotFound();
         }
 
+        if (!User.IsInRole(TravelRoles.Admin) && User.FindFirstValue(JwtRegisteredClaimNames.Sub) != trip.UserId)
+        {
+            return Forbid();
+        }
+
         trip.Name = updateTripDto.Name;
         trip.Description = updateTripDto.Description;
         trip.TripStart = updateTripDto.TripStart;
@@ -127,6 +140,7 @@ public class TripsController : ControllerBase
 
     // DELETE: api/v1/trips/{tripId}
     [HttpDelete("{tripId}", Name = "DeleteTrip")]
+    [Authorize]
     public async Task<IActionResult> DeleteTrip(int tripId)
     {
         var trip = await _dbContext.Trips.FirstOrDefaultAsync(t => t.Id == tripId);
@@ -134,6 +148,11 @@ public class TripsController : ControllerBase
         if (trip == null)
         {
             return NotFound();
+        }
+        
+        if (User.FindFirstValue(JwtRegisteredClaimNames.Sub) != trip.UserId)
+        {
+            return Forbid();
         }
 
         _dbContext.Trips.Remove(trip);

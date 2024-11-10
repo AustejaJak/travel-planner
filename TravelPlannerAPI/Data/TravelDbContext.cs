@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TravelPlannerAPI.Auth.Model;
+using TravelPlannerAPI.Data.Entities;
 
 public class TravelDbContext : IdentityDbContext<TravelMember>
 {
@@ -8,6 +9,7 @@ public class TravelDbContext : IdentityDbContext<TravelMember>
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Destination> Destinations { get; set; }
     public DbSet<Activity> Activities { get; set; }
+    public DbSet<Session> Sessions { get; set; }
 
     public TravelDbContext(IConfiguration configuration)
     {
