@@ -1,0 +1,8 @@
+services:
+  nuxt:
+    build:
+      context: .
+    image: travelplanner-frontend
+    container_name: travelplanner-frontend
+    ports:
+      - "8080:3000"
