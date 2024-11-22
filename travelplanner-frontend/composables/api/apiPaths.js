@@ -1,0 +1,4 @@
+const apiPaths = {
+    trips: 'trips',
+
+}
