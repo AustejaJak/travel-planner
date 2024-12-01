@@ -1,4 +1,4 @@
-const apiAuthPaths = {
+export const apiAuthPaths = {
     register: 'accounts',
     login: 'login',
     refreshToken: 'accessToken',

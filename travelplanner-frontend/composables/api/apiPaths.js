@@ -1,4 +1,0 @@
-const apiPaths = {
-    trips: 'trips',
-
-}

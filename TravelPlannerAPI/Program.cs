@@ -3,7 +3,6 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TravelPlannerAPI.Auth;
@@ -11,6 +10,16 @@ using TravelPlannerAPI.Auth.Model;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<TravelDbContext>();
@@ -61,6 +70,8 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
+
+app.UseCors("AllowSpecificOrigins");
 
 //var dbContext = scope.ServiceProvider.GetRequiredService<TravelDbContext>();
 

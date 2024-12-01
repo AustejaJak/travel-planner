@@ -234,7 +234,7 @@ HTTP/1.1 204 No Content
   "currentPage": 1,
   "totalPages": 20,
   "previousPageLink": null,
-  "nextPageLink": "/api/v1/trips?pageNumber=2&pageSize=5"
+  "nextPageLink": "/paths/v1/trips?pageNumber=2&pageSize=5"
 }
 ```
 
