@@ -76,7 +76,7 @@ public static class AuthEndpoints
         var isPasswordValid = await userManager.CheckPasswordAsync(user, dto.Password);
         if (!isPasswordValid)
         {
-            Results.UnprocessableEntity("Username or password was incorrect.");
+            return Results.UnprocessableEntity("Username or password was incorrect.");
         }
 
         var roles = await userManager.GetRolesAsync(user);

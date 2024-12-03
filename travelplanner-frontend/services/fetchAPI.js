@@ -1,4 +1,4 @@
-export async function fetchAPI(urlString, payload) {
+export async function fetchAPI(urlString, payload, token) {
     try {
         const url = new URL(urlString);
         const response = await fetch(url, {
@@ -9,11 +9,10 @@ export async function fetchAPI(urlString, payload) {
             body: JSON.stringify(payload),
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (token === true){
+            return response;
         }
 
-        console.log("Request successful, no response body required.");
         return { success: true };
 
     } catch (err) {
