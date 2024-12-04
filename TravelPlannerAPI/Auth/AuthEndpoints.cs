@@ -90,7 +90,7 @@ public static class AuthEndpoints
 
         var cookieOptions = new CookieOptions()
         {
-            HttpOnly = true,
+            HttpOnly = false,
             SameSite = SameSiteMode.Lax,
             Expires = expiresAt,
             //Secure = false
