@@ -4,11 +4,11 @@ export function getCookies(name) {
     return cookie ? cookie.split('=')[1] : null;
 }
 
-export function setCookies(value, minutes) {
+export function setCookies(name, value, minutes) {
     const date = new Date();
-    date.setTime(date.getTime() + minutes * 60 * 1000); // Convert minutes to milliseconds
+    date.setTime(date.getTime() + minutes * 60 * 1000);
     const expires = `expires=${date.toUTCString()}`;
-    document.cookie = `refreshToken=${value}; ${expires}; secure; samesite=strict`;
+    document.cookie = `${name}=${value}; ${expires}; secure; samesite=strict`;
 }
 
 export function removeCookies(name) {

@@ -90,7 +90,7 @@ public static class AuthEndpoints
 
         var cookieOptions = new CookieOptions()
         {
-            HttpOnly = false,
+            HttpOnly = true,
             SameSite = SameSiteMode.Lax,
             Expires = expiresAt,
             //Secure = false
@@ -149,7 +149,7 @@ public static class AuthEndpoints
         httpContext.Response.Cookies.Append("RefreshToken", newRefreshToken, cookieOptions);
 
         await sessionService.ExtendSessionAsync(sessionIdAsGuid, newRefreshToken, expiresAt);
-
+        
         return Results.Ok(new SuccesfulLoginDto(accessToken));
     });
     
