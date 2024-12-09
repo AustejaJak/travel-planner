@@ -107,8 +107,6 @@ export const useAuth = () => {
                     refreshAccessTokens()
                         .then(resolve)
                         .catch(reject);
-
-                    console.log("refreshed");
                 }
             } catch (error) {
                 console.error("Error setting up auto-refresh:", error);

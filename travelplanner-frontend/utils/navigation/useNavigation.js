@@ -5,8 +5,7 @@ export function useNavigation() {
     const route = useRoute();
     const navigation = ref([
         { name: 'Home', href: '/', current: false },
-        { name: 'All Trips', href: '/all-trips', current: false },
-        { name: 'Calendar', href: '/calendar', current: false },
+        { name: 'All Trips', href: '/trips', current: false },
     ]);
 
     watchEffect(() => {

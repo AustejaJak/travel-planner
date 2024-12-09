@@ -45,7 +45,7 @@ public class TripsController : ControllerBase
 
         HttpContext.Response.Headers.Append("Pagination", JsonSerializer.Serialize(paginationMetadata));
 
-        var trips = pagedList.Select(trip => new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.TripStart, trip.TripEnd, trip.CreationDate)).ToList();
+        var trips = pagedList.Select(trip => new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.Url, trip.TripStart, trip.TripEnd, trip.CreationDate)).ToList();
 
         return Ok(trips);
     }
@@ -63,7 +63,7 @@ public class TripsController : ControllerBase
             return NotFound();
         }
 
-        var tripDto = new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.TripStart, trip.TripEnd, trip.CreationDate);
+        var tripDto = new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.Url, trip.TripStart, trip.TripEnd, trip.CreationDate);
         return Ok(tripDto);
     }
 
@@ -84,6 +84,7 @@ public class TripsController : ControllerBase
         {
             Name = createTripDto.Name,
             Description = createTripDto.Description,
+            Url = createTripDto.Url,
             TripStart = createTripDto.TripStart,
             TripEnd = createTripDto.TripEnd,
             CreationDate = DateTime.UtcNow,
@@ -94,7 +95,7 @@ public class TripsController : ControllerBase
         await _dbContext.SaveChangesAsync();
 
         var links = CreateLinks(trip.Id, HttpContext, linkGenerator);
-        var tripDto = new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.TripStart, trip.TripEnd, trip.CreationDate);
+        var tripDto = new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.Url, trip.TripStart, trip.TripEnd, trip.CreationDate);
 
         var resource = new ResourceDto<TripDtoInitial>(tripDto, links.ToArray());
 
@@ -129,13 +130,14 @@ public class TripsController : ControllerBase
 
         trip.Name = updateTripDto.Name;
         trip.Description = updateTripDto.Description;
+        trip.Url = updateTripDto.Url;
         trip.TripStart = updateTripDto.TripStart;
         trip.TripEnd = updateTripDto.TripEnd;
 
         _dbContext.Trips.Update(trip);
         await _dbContext.SaveChangesAsync();
 
-        return Ok(new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.TripStart, trip.TripEnd, trip.CreationDate));
+        return Ok(new TripDtoInitial(trip.Id, trip.Name, trip.Description, trip.Url, trip.TripStart, trip.TripEnd, trip.CreationDate));
     }
 
     // DELETE: api/v1/trips/{tripId}

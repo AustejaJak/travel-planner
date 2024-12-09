@@ -351,6 +351,10 @@ namespace TravelPlannerAPI.Migrations
                     b.Property<DateTime>("TripStart")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
