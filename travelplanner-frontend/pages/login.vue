@@ -2,6 +2,11 @@
 import Simple_card from "~/components/application-ui/forms/sign-in-forms/simple_card.vue";
 import Social_links_only from "~/components/marketing/sections/footers/social_links_only.vue";
 import Dark_with_quick_action from "~/components/application-ui/navigation/navbars/dark_with_quick_action.vue";
+
+definePageMeta({
+  middleware: 'redirect-if-logged-in'
+});
+
 </script>
 
 <template>
@@ -13,7 +18,5 @@ import Dark_with_quick_action from "~/components/application-ui/navigation/navba
     <Social_links_only />
   </div>
 </template>
-
 <style scoped>
-
 </style>

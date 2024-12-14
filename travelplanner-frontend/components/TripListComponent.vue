@@ -1,27 +1,16 @@
 <script setup lang="ts">
-import { useTripResources } from "~/composables/useTripResources";
-
-const { getTrip } = useTripResources();
-
-
-onMounted(async () => {
-  try {
-    const fetchedTrips = await getTrip();
-
-    const firstTripId = fetchedTrips[0]?.name;
-    console.log('First Trip ID:', firstTripId);
-  } catch (err) {
-    console.error('Error:', err);
-  }
-});
-
-
+import SeparateCards from "~/components/SeparateCardsComponent.vue";
 
 </script>
 
 <template>
   <div class="relative bg-gray-900">
-    <div class="flex min-h-full flex-col justify-center py-32 sm:px-6 lg:px-8 z-0">
+    <div class="flex min-h-full flex-col justify-start py-16 sm:px-6 lg:px-8 z-0">
+      <div class="text-center text-white mb-5 mt-5">
+        <h1 class="text-3xl font-bold sm:text-3xl">All trip plans made by people</h1>
+        <p class="mt-4 text-md font-light">Explore amazing travel destinations, plan your trips, and make unforgettable memories with our easy-to-use platform.</p>
+      </div>
+
       <svg
           class="absolute inset-0 z-10 h-full w-full stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
           aria-hidden="true">
@@ -49,6 +38,10 @@ onMounted(async () => {
           </linearGradient>
         </defs>
       </svg>
+    </div>
+
+    <div class="relative z-20">
+      <SeparateCards/>
     </div>
   </div>
 </template>
