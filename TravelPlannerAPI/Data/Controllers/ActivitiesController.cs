@@ -1,8 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using O9d.AspNet.FluentValidation;
+using TravelPlannerAPI.Auth.Model;
 using TravelPlannerAPI.Helpers;
 using static ActivityDto;
 
@@ -18,9 +22,12 @@ public class ActivitiesController : ControllerBase
 
     // GET: api/v1/trips/{tripId}/destinations/{destinationId}/activities
     [HttpGet(Name = "GetActivities")]
-    public async Task<IActionResult> GetActivities([FromQuery] SearchParameters searchParameters, LinkGenerator linkGenerator, CancellationToken cancellationToken)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetActivities(int tripId, int destinationId, [FromQuery] SearchParameters searchParameters, LinkGenerator linkGenerator, CancellationToken cancellationToken)
     {
-        var queryable = _dbContext.Activities.AsQueryable().OrderBy(o => o.CreationDate);
+        var queryable = _dbContext.Activities
+            .Where(d => d.Destination.Id == destinationId && d.Destination.Trip.Id == tripId)
+            .OrderBy(o => o.CreationDate);
 
         var pagedList = await PagedList<Activity>.CreateAsync(queryable, searchParameters.PageNumber!.Value, searchParameters.PageSize!.Value);
 
@@ -44,6 +51,7 @@ public class ActivitiesController : ControllerBase
 
     // GET: api/v1/trips/{tripId}/destinations/{destinationId}/activities/{activitiesId}
     [HttpGet("{activitiesId}", Name = "GetActivity")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetActivityById(int tripId, int destinationId, int activitiesId)
     {
         var activity = await _dbContext.Activities
@@ -60,6 +68,7 @@ public class ActivitiesController : ControllerBase
 
     // POST: api/v1/trips/{tripId}/destinations/{destinationId}/activities
     [HttpPost(Name = "CreateActivity")]
+    [Authorize(Roles = TravelRoles.TravelMember)]
     public async Task<IActionResult> CreateActivity(int tripId, int destinationId, [Validate] CreateActivityDto createActivityDto, LinkGenerator linkGenerator)
     {
         if (!ModelState.IsValid)
@@ -90,7 +99,7 @@ public class ActivitiesController : ControllerBase
             EndTime = createActivityDto.EndTime,
             CreationDate = DateTime.UtcNow,
             Destination = destination,
-            UserId = ""
+            UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
         };
 
         _dbContext.Activities.Add(activity);
@@ -109,6 +118,7 @@ public class ActivitiesController : ControllerBase
 
     // PUT: api/v1/trips/{tripId}/destinations/{destinationId}/activities/{activitiesId}
     [HttpPut("{activitiesId}", Name = "EditActivity")]
+    [Authorize]
     public async Task<IActionResult> UpdateActivity(int tripId, int destinationId, int activitiesId, [Validate] UpdateActivityDto updateActivityDto)
     {
 
@@ -126,6 +136,11 @@ public class ActivitiesController : ControllerBase
         {
             return NotFound();
         }
+        
+        if (!User.IsInRole(TravelRoles.Admin) && User.FindFirstValue(JwtRegisteredClaimNames.Sub) != activity.UserId)
+        {
+            return Forbid();
+        }
 
         activity.Name = updateActivityDto.Name;
         activity.Type = updateActivityDto.Type;
@@ -140,6 +155,7 @@ public class ActivitiesController : ControllerBase
 
     // DELETE: api/v1/trips/{tripId}/destinations/{destinationId}/activities/{activitiesId}
     [HttpDelete("{activitiesId}", Name = "DeleteActivity")]
+    [Authorize]
     public async Task<IActionResult> DeleteAcitivty(int tripId, int destinationId, int activitiesId)
     {
         var activity = await _dbContext.Activities
@@ -148,6 +164,11 @@ public class ActivitiesController : ControllerBase
         if (activity == null)
         {
             return NotFound();
+        }
+        
+        if (!User.IsInRole(TravelRoles.Admin) && User.FindFirstValue(JwtRegisteredClaimNames.Sub) != activity.UserId)
+        {
+            return Forbid();
         }
 
         _dbContext.Activities.Remove(activity);

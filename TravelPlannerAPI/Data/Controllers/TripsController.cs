@@ -29,6 +29,7 @@ public class TripsController : ControllerBase
     public async Task<IActionResult> GetTrips([FromQuery] SearchParameters searchParameters, LinkGenerator linkGenerator)
     {
         var queryable = _dbContext.Trips.AsQueryable().OrderBy(o => o.CreationDate);
+        
 
         var pagedList = await PagedList<Trip>.CreateAsync(queryable, searchParameters.PageNumber!.Value, searchParameters.PageSize!.Value);
 

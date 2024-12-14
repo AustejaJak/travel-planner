@@ -3,42 +3,82 @@
     <li
         v-for="trip in trips"
         :key="trip.id"
-        class="overflow-hidden rounded-md bg-white px-6 py-4 shadow w-8/12 flex transform transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer group"
+        class="overflow-hidden rounded-md bg-white px-6 py-4 shadow w-8/12 flex flex-col transform transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer group mb-8"
+        @click="selectTrip(trip.id)"
     >
-      <!-- Content section on the left -->
-      <div class="flex-1 pr-4 flex flex-col justify-between">
-        <div>
-          <h2 class="text-lg font-bold">{{ trip.name }}</h2>
-          <p class="text-sm text-gray-600 pt-3">{{ trip.description }}</p>
-          <div class="flex text-sm text-gray-500 pt-3 space-x-4">
-            <p><span class="font-bold">Trip Start:</span> {{ formatDate(trip.tripStart) }}</p>
-            <p><span class="font-bold">Trip End:</span> {{ formatDate(trip.tripEnd) }}</p>
+      <div class="flex">
+        <div class="flex-1 pr-4 flex flex-col justify-between">
+          <div>
+            <h2 class="text-lg font-bold">{{ trip.name }}</h2>
+            <p class="text-sm text-gray-600 pt-3">{{ trip.description }}</p>
+            <div class="flex text-sm text-gray-500 pt-3 space-x-4">
+              <p><span class="font-bold">Trip Start:</span> {{ formatDate(trip.tripStart) }}</p>
+              <p><span class="font-bold">Trip End:</span> {{ formatDate(trip.tripEnd) }}</p>
+            </div>
+            <p class="text-sm text-gray-400 pt-5">
+              Created on: {{ formatDate(trip.creationDate) }}
+            </p>
           </div>
-          <p class="text-sm text-gray-400 pt-5">
-            Created on: {{ formatDate(trip.creationDate) }}
-          </p>
-        </div>
 
-        <div class="flex justify-center pt-4">
-          <ChevronDownIcon class="w-6 h-6 transition-all duration-300 text-gray-400 group-hover:text-gray-700" />
+          <div class="flex justify-center pt-4">
+            <ChevronDownIcon class="w-6 h-6 transition-all duration-300 text-gray-400 group-hover:text-gray-700" />
+          </div>
         </div>
+        <img
+            :src="trip.url"
+            alt="Trip Image"
+            class="w-2/5 h-52 rounded-md transition-all duration-300 group-hover:grayscale-0"
+            :class="{'grayscale': selectedTripId !== trip.id}"
+        />
       </div>
+      <div v-if="selectedTripId === trip.id" class="mt-4 bg-gray-50 p-4 rounded-md">
+        <ul class="list-disc">
+          <li v-for="destination in destinations" :key="destination.id" class="flex flex-col space-y-2">
+            <button
+                class="flex items-center cursor-pointer font-semibold text-gray-700 w-full transition-all duration-300 mt-3 p-2 border border-gray-300 hover:border-gray-400 rounded"
+                @click.stop="selectDestination(trip.id, destination.id)"
+            >
+              <span class="flex-1">{{ destination.startLocation }} - {{ destination.endLocation }}</span>
+              <ChevronDownIcon class="w-6 h-6 text-gray-700 transition-all duration-300" />
+            </button>
 
-      <img :src="trip.url" alt="Trip Image" class="w-2/5 h-auto rounded-md transition-all duration-300 grayscale group-hover:grayscale-0"/>
+            <div v-if="selectedDestinationId === destination.id" class="ml-4">
+              <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+                <li v-for="activity in activities" :key="activity.id" class="bg-white p-4 rounded-md shadow-sm hover:shadow-lg">
+                  <div class="flex flex-col space-y-2">
+                    <div class="text-md font-semibold text-gray-800">{{ activity.name }}</div>
+                    <div class="text-sm text-gray-500">
+                      <p>Type: {{ activity.type }}</p>
+                      <p>Start Time: <strong>{{ activity.startTime }}</strong></p>
+                      <p>End Time: <strong>{{ activity.endTime }}</strong></p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
     </li>
   </ul>
 </template>
 
-
 <script setup>
-import {ref, onMounted} from "vue";
-import {useTripResources} from "~/composables/useTripResources.js";
-import {ChevronDownIcon} from "@heroicons/vue/20/solid";
-import {formatDate} from "compatx";
+import { onMounted, ref } from "vue";
+import { useTripResources } from "~/composables/useTripResources.js";
+import { ChevronDownIcon } from "@heroicons/vue/20/solid";
+import { formatDate } from "compatx";
+import { useDestinationResources } from "~/composables/useDestinationResources.js";
+import { useActivityResources } from "~/composables/useActivityResources.js";
 
 const trips = ref([]);
+const destinations = ref([]);
+const activities = ref([]);
 
-const {getTrip} = useTripResources();
+const selectedTripId = ref(null);
+const selectedDestinationId = ref(null);
+
+const { getTrip } = useTripResources();
 
 onMounted(async () => {
   try {
@@ -47,9 +87,48 @@ onMounted(async () => {
       trips.value = fetchedTrips;
     }
   } catch (err) {
-    console.error('Error fetching trips:', err);
+    console.error("Error fetching trips:", err);
   }
 });
+
+const selectTrip = async (tripId) => {
+  try {
+    if (selectedTripId.value === tripId) {
+      selectedTripId.value = null;
+      destinations.value = [];
+      activities.value = [];
+      return;
+    }
+
+    selectedTripId.value = tripId;
+    selectedDestinationId.value = null;
+    activities.value = [];
+
+    const { getDestination } = useDestinationResources(tripId);
+    destinations.value = await getDestination();
+  } catch (err) {
+    console.error("Error fetching destinations:", err);
+  }
+};
+
+const selectDestination = async (tripId, destinationId) => {
+  try {
+    if (selectedTripId.value === tripId && selectedDestinationId.value === destinationId) {
+      selectedTripId.value = null;
+      selectedDestinationId.value = null;
+      activities.value = [];
+      return;
+    }
+
+    selectedTripId.value = tripId;
+    selectedDestinationId.value = destinationId;
+
+    const { getActivity } = useActivityResources(tripId, destinationId);
+    activities.value = await getActivity();
+  } catch (err) {
+    console.error("Error fetching activities:", err);
+  }
+};
 </script>
 
 <style scoped>

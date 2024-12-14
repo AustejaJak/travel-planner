@@ -1,7 +1,11 @@
+using System.Security.Claims;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 using O9d.AspNet.FluentValidation;
+using TravelPlannerAPI.Auth.Model;
 using TravelPlannerAPI.Helpers;
 using static DestinationDto;
 
@@ -17,9 +21,12 @@ public class DestinationsController : ControllerBase
 
     // GET: api/v1/trips/{tripId}/destinations
     [HttpGet(Name = "GetDestinations")]
-    public async Task<IActionResult> GetDestinations([FromQuery] SearchParameters searchParameters, LinkGenerator linkGenerator, CancellationToken cancellationToken)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetDestinations(int tripId, [FromQuery] SearchParameters searchParameters, LinkGenerator linkGenerator, CancellationToken cancellationToken)
     {
-        var queryable = _dbContext.Destinations.AsQueryable().OrderBy(o => o.CreationDate);
+        var queryable = _dbContext.Destinations
+            .Where(d => d.Trip.Id == tripId)
+            .OrderBy(o => o.CreationDate);
 
         var pagedList = await PagedList<Destination>.CreateAsync(queryable, searchParameters.PageNumber!.Value, searchParameters.PageSize!.Value);
 
@@ -42,6 +49,7 @@ public class DestinationsController : ControllerBase
 
     // GET: api/v1/trips/{tripId}/destinations/{destinationId}
     [HttpGet("{destinationId}", Name = "GetDestination")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetDestinationById(int tripId, int destinationId)
     {
         var destination = await _dbContext.Destinations
@@ -58,6 +66,7 @@ public class DestinationsController : ControllerBase
 
     // POST: api/v1/trips/{tripId}/destinations
     [HttpPost(Name = "CreateDestination")]
+    [Authorize(Roles = TravelRoles.TravelMember)]
     public async Task<IActionResult> CreateDestination(int tripId, [Validate] CreateDestinationDto createDestinationDto, LinkGenerator linkGenerator)
     {
 
@@ -73,14 +82,14 @@ public class DestinationsController : ControllerBase
         {
             return NotFound("Trip not found");
         }
-
+        
         var destination = new Destination
         {
             StartLocation = createDestinationDto.StartLocation,
             EndLocation = createDestinationDto.EndLocation,
             CreationDate = DateTime.UtcNow,
             Trip = trip,
-            UserId = ""
+            UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
         };
 
         _dbContext.Destinations.Add(destination);
@@ -97,6 +106,7 @@ public class DestinationsController : ControllerBase
 
     // PUT: api/v1/trips/{tripId}/destinations/{destinationId}
     [HttpPut("{destinationId}", Name = "EditDestination")]
+    [Authorize]
     public async Task<IActionResult> UpdateDestination(int tripId, int destinationId, [Validate] UpdateDestinationDto updateDestinationDto)
     {
 
@@ -114,6 +124,11 @@ public class DestinationsController : ControllerBase
         {
             return NotFound();
         }
+        
+        if (!User.IsInRole(TravelRoles.Admin) && User.FindFirstValue(JwtRegisteredClaimNames.Sub) != destination.UserId)
+        {
+            return Forbid();
+        }
 
         destination.StartLocation = updateDestinationDto.StartLocation;
         destination.EndLocation = updateDestinationDto.EndLocation;
@@ -126,6 +141,7 @@ public class DestinationsController : ControllerBase
 
     // DELETE: api/v1/trips/{tripId}/destinations/{destinationId}
     [HttpDelete("{destinationId}", Name = "DeleteDestination")]
+    [Authorize]
     public async Task<IActionResult> DeleteDestination(int tripId, int destinationId)
     {
         var destination = await _dbContext.Destinations
@@ -134,6 +150,11 @@ public class DestinationsController : ControllerBase
         if (destination == null)
         {
             return NotFound();
+        }
+        
+        if (User.FindFirstValue(JwtRegisteredClaimNames.Sub) != destination.UserId)
+        {
+            return Forbid();
         }
 
         _dbContext.Destinations.Remove(destination);
