@@ -83,9 +83,10 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useActivityResources } from "~/composables/useActivityResources";
-import ActionButtonForActivityComponent from "~/components/ActionButtonForActivityComponent.vue";
 
-const { postActivity } = useActivityResources();
+const { putActivity } = useActivityResources();
+
+const isAdmin = ref(false);
 
 const Activity = ref({
   name: '',
@@ -122,10 +123,18 @@ const submitActivity = async () => {
     if (typeof window !== "undefined") {
       const tripId = localStorage.getItem("TripId");
       const destinationId = localStorage.getItem("DestinationId");
+      const activityId = localStorage.getItem("ActivityId");
+      const role = localStorage.getItem("Role");
 
-      const result = await postActivity(Activity.value, tripId, destinationId);
-      if (result) {
+      if (role === "Admin"){
+        isAdmin.value = true;
+      }
+
+      const result = await putActivity(Activity.value, tripId, destinationId, activityId);
+      if (result && !isAdmin) {
         window.location.href = '/myTrips';
+      } else if (result && isAdmin) {
+        window.location.href = '/adminTrips'
       }
     }
   } catch (error) {

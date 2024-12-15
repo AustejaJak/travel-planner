@@ -11,13 +11,10 @@
       <MenuItems class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
         <div class="py-1">
           <MenuItem v-slot="{ active }">
-            <a href="/createActivity" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Add an activity</a>
+            <a href="/editActivity" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Edit activity</a>
           </MenuItem>
           <MenuItem v-slot="{ active }">
-            <a href="/editDestinations" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Edit destination</a>
-          </MenuItem>
-          <MenuItem v-slot="{ active }">
-            <a href="#" @click="deleteDestinationFunction" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Delete destination</a>
+            <a href="#" @click="deleteActivityFunction" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Delete activity</a>
           </MenuItem>
         </div>
       </MenuItems>
@@ -28,16 +25,16 @@
 <script setup>
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
-import { useDestinationResources } from "~/composables/useDestinationResources.js";
+import { useActivityResources } from "~/composables/useActivityResources.js";
 
-
-const deleteDestinationFunction = async () => {
+const deleteActivityFunction = async () => {
   try {
     if (typeof window !== undefined) {
       const tripId = localStorage.getItem("TripId");
       const destinationId = localStorage.getItem("DestinationId");
-      const {deleteDestination} = useDestinationResources(tripId);
-      await deleteDestination(tripId, destinationId);
+      const activityId = localStorage.getItem("ActivityId");
+      const {deleteActivity} = useActivityResources(tripId, destinationId);
+      await deleteActivity(tripId, destinationId, activityId);
       window.location.reload();
     }
   } catch (err) {

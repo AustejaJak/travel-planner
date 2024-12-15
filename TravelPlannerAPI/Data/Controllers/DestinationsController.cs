@@ -152,7 +152,7 @@ public class DestinationsController : ControllerBase
             return NotFound();
         }
         
-        if (User.FindFirstValue(JwtRegisteredClaimNames.Sub) != destination.UserId)
+        if (!User.IsInRole(TravelRoles.Admin) && User.FindFirstValue(JwtRegisteredClaimNames.Sub) != destination.UserId)
         {
             return Forbid();
         }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SeparateCards from "~/components/SeparateCardsComponent.vue";
+import MySeparateCardsComponent from "~/components/cardComponents/MySeparateCardsComponent.vue";
 
 </script>
 
@@ -7,8 +7,8 @@ import SeparateCards from "~/components/SeparateCardsComponent.vue";
   <div class="relative bg-gray-900">
     <div class="flex min-h-full flex-col justify-start py-16 sm:px-6 lg:px-8 z-0">
       <div class="text-center text-white mb-5 mt-5">
-        <h1 class="text-3xl font-bold sm:text-3xl">All trip plans made by people</h1>
-        <p class="mt-4 text-md font-light">Explore amazing travel destinations, plan your trips, and make unforgettable memories with our easy-to-use platform.</p>
+        <h1 class="text-3xl font-bold sm:text-3xl">My trips</h1>
+        <p class="mt-4 text-md font-light">All created trips by you. Can add activites and destinations here.</p>
       </div>
 
       <svg
@@ -41,7 +41,7 @@ import SeparateCards from "~/components/SeparateCardsComponent.vue";
     </div>
 
     <div class="relative z-20">
-      <SeparateCards/>
+      <MySeparateCardsComponent/>
     </div>
   </div>
 </template>

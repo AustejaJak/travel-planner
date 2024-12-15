@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Dark_with_quick_action from "~/components/application-ui/navigation/navbars/dark_with_quick_action.vue";
 import Social_links_only from "~/components/marketing/sections/footers/social_links_only.vue";
-import TripListComponent from "~/components/TripListComponent.vue";
+import TripListComponent from "~/components/tripComponents/TripListComponent.vue";
 </script>
 
 <template>

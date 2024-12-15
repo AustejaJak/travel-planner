@@ -83,8 +83,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useActivityResources } from "~/composables/useActivityResources";
+import ActionButtonForActivityComponent from "~/components/actionButtons/ActionButtonForActivityComponent.vue";
 
-const { putActivity } = useActivityResources();
+const { postActivity } = useActivityResources();
 
 const Activity = ref({
   name: '',
@@ -121,9 +122,8 @@ const submitActivity = async () => {
     if (typeof window !== "undefined") {
       const tripId = localStorage.getItem("TripId");
       const destinationId = localStorage.getItem("DestinationId");
-      const activityId = localStorage.getItem("ActivityId");
 
-      const result = await putActivity(Activity.value, tripId, destinationId, activityId);
+      const result = await postActivity(Activity.value, tripId, destinationId);
       if (result) {
         window.location.href = '/myTrips';
       }

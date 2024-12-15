@@ -8,13 +8,16 @@
     </div>
 
     <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-      <MenuItems class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+      <MenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
         <div class="py-1">
-          <MenuItem v-slot="{ active }">
-            <a href="/editActivity" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Edit activity</a>
+          <MenuItem v-if="!isAdmin" v-slot="{ active }">
+            <a href="/createDestinations" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Add destination</a>
           </MenuItem>
           <MenuItem v-slot="{ active }">
-            <a href="#" @click="deleteActivityFunction" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Delete activity</a>
+            <a href="/editTrips" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Edit trip</a>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <a href="#" @click="deleteTripFunction" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Delete trip</a>
           </MenuItem>
         </div>
       </MenuItems>
@@ -25,17 +28,31 @@
 <script setup>
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
-import { useActivityResources } from "~/composables/useActivityResources.js";
+import { useTripResources} from "~/composables/useTripResources.js";
+import {onMounted} from "vue";
 
+const {deleteTrip} = useTripResources();
 
-const deleteActivityFunction = async () => {
+const isAdmin = ref(false);
+
+const getUserRole = () => {
+  if (typeof window !== "undefined") {
+    const role = localStorage.getItem('Role');
+    if (role === "Admin") {
+      isAdmin.value = true;
+    }
+  }
+};
+
+onMounted(() => {
+  getUserRole();
+});
+
+const deleteTripFunction = async () => {
   try {
     if (typeof window !== undefined) {
       const tripId = localStorage.getItem("TripId");
-      const destinationId = localStorage.getItem("DestinationId");
-      const activityId = localStorage.getItem("ActivityId");
-      const {deleteActivity} = useActivityResources(tripId, destinationId);
-      await deleteActivity(tripId, destinationId, activityId);
+      await deleteTrip(tripId);
       window.location.reload();
     }
   } catch (err) {

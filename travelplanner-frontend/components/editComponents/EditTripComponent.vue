@@ -96,6 +96,8 @@ import { useTripResources } from "~/composables/useTripResources.js";
 
 const { putTrip } = useTripResources();
 
+const isAdmin = ref(false);
+
 const trip = ref({
   name: '',
   description: '',
@@ -166,8 +168,16 @@ const updateTrip = async () => {
     if (typeof window !== "undefined"){
       const tripId = localStorage.getItem("TripId");
       const result = await putTrip(trip.value, tripId);
-      if (result) {
+      const role = localStorage.getItem("Role");
+
+      if (role === "Admin"){
+        isAdmin.value = true;
+      }
+
+      if (result && !isAdmin) {
         window.location.href = '/myTrips';
+      } else if (result && isAdmin) {
+        window.location.href = '/adminTrips'
       }
     }
   } catch (error) {

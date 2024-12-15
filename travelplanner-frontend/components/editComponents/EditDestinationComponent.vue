@@ -60,16 +60,26 @@ const destination = ref({
   endlocation: '',
 });
 
+const isAdmin = ref(false);
+
 const updateDestination = async () => {
 
   try {
     if (typeof window !== "undefined") {
       const tripId = localStorage.getItem("TripId");
       const DestinationId = localStorage.getItem("DestinationId");
+      const role = localStorage.getItem("Role");
       const { putDestination } = useDestinationResources(tripId);
+
+      if (role === "Admin"){
+        isAdmin.value = true;
+      }
+
       const result = await putDestination(destination.value, DestinationId);
-      if (result) {
+      if (result && !isAdmin) {
         window.location.href = '/myTrips';
+      } else if (result && isAdmin) {
+        window.location.href = '/adminTrips'
       }
     }
   } catch (error) {

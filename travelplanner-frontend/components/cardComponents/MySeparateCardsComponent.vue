@@ -86,9 +86,9 @@ import { formatDate } from "compatx";
 import { useDestinationResources } from "~/composables/useDestinationResources.js";
 import { useActivityResources } from "~/composables/useActivityResources.js";
 import { jwtDecode } from "jwt-decode";
-import ActionButtonComponent from "~/components/ActionButtonComponent.vue";
-import ActionButtonForDestination from "~/components/ActionButtonForDestination.vue";
-import ActionButtonForActivityComponent from "~/components/ActionButtonForActivityComponent.vue";
+import ActionButtonComponent from "~/components/actionButtons/ActionButtonComponent.vue";
+import ActionButtonForDestination from "~/components/actionButtons/ActionButtonForDestination.vue";
+import ActionButtonForActivityComponent from "~/components/actionButtons/ActionButtonForActivityComponent.vue";
 
 const trips = ref([]);
 const destinations = ref([]);

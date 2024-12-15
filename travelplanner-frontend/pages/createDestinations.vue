@@ -3,6 +3,10 @@ import Basic_card from "~/components/application-ui/layout/panels/basic_card.vue
 import Social_links_only from "~/components/marketing/sections/footers/social_links_only.vue";
 import Dark_with_quick_action from "~/components/application-ui/navigation/navbars/dark_with_quick_action.vue";
 
+definePageMeta({
+  middleware: 'redirect-if-logged-out',
+});
+
 </script>
 
 <template>
