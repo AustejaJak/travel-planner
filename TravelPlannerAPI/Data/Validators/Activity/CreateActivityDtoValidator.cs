@@ -7,7 +7,7 @@ public class CreateActivityDtoValidator : AbstractValidator<CreateActivityDto>
         RuleFor(dto => dto.Name).NotEmpty().NotNull().Length(min: 2, max: 100);
         RuleFor(dto => dto.Type).NotEmpty().NotNull().Length(min: 2, max: 100);
         RuleFor(activity => activity.StartTime).NotEmpty().WithMessage("Start time is required.").Must(BeAValidTime).WithMessage("Start time must be in a valid format (e.g., HH:mm:ss).");
-        RuleFor(activity => activity.EndTime).NotEmpty().WithMessage("End time is required.").Must(BeAValidTime).WithMessage("End time must be in a valid format (e.g., HH:mm:ss).").GreaterThan(activity => activity.StartTime).WithMessage("End time must be after start time.");
+        RuleFor(activity => activity.EndTime).NotEmpty().WithMessage("End time is required.").Must(BeAValidTime).WithMessage("End time must be in a valid format (e.g., HH:mm:ss).");
     }
     private bool BeAValidTime(TimeSpan time)
     {

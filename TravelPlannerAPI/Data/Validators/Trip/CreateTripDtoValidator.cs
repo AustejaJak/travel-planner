@@ -6,7 +6,7 @@ public class CreateTripDtoValidator : AbstractValidator<CreateTripDto>
     {
         RuleFor(dto => dto.Name).NotEmpty().NotNull().Length(min: 2, max: 100);
         RuleFor(dto => dto.Description).NotEmpty().NotNull().Length(min: 5, max: 500);
-        RuleFor(dto => dto.TripStart).NotEmpty().NotNull().Must(BeAValidDate).GreaterThan(d => DateTime.Now);
+        RuleFor(dto => dto.TripStart).NotEmpty().NotNull().Must(BeAValidDate).GreaterThan(DateTime.Now.AddDays(-1));
         RuleFor(dto => dto.TripEnd).NotEmpty().NotNull().Must(BeAValidDate).GreaterThan(dto => dto.TripStart).GreaterThan(d => DateTime.Now);
     }
 

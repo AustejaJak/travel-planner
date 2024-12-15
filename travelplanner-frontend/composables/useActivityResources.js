@@ -18,9 +18,10 @@ export const useActivityResources = (tripId, destinationId) => {
     };
 
 
-    const postActivity = async (credentials) => {
+    const postActivity = async (credentials, tripId, destinationId) => {
         try {
-            const response = await fetch(urlActivity, requestOptionsHelper.post(credentials));
+            const activityUrlWithId = `http://localhost:5207/api/v1/trips/${tripId}/destinations/${destinationId}/activities`;
+            const response = await fetch(activityUrlWithId, requestOptionsHelper.post(credentials));
             if (response.ok) {
                 return {status: response.status, message: 'Trips successfully created'};
             } else {
@@ -32,9 +33,10 @@ export const useActivityResources = (tripId, destinationId) => {
         }
     }
 
-    const putActivity = async (credentials) => {
+    const putActivity = async (credentials, tripId, destinationId, activityId) => {
         try {
-            const response = await fetch(urlActivity, requestOptionsHelper.put(credentials));
+            const activityUrlWithId = `http://localhost:5207/api/v1/trips/${tripId}/destinations/${destinationId}/activities/${activityId}`;
+            const response = await fetch(activityUrlWithId, requestOptionsHelper.put(credentials));
             if (response.ok) {
                 return {status: response.status, message: 'Trip successfully updated'};
             } else {
@@ -46,15 +48,14 @@ export const useActivityResources = (tripId, destinationId) => {
         }
     }
 
-    const deleteActivity = async () => {
+    const deleteActivity = async (tripId, destinationId, activityId) => {
         try {
-            const response = await fetch(urlActivity, requestOptionsHelper.del);
+            const activityUrlWithId = `http://localhost:5207/api/v1/trips/${tripId}/destinations/${destinationId}/activities/${activityId}`;
+            const response = await fetch(activityUrlWithId, requestOptionsHelper.del);
             if (response.ok) {
-                const data = response.json();
-                console.log(data);
+                return {status: response.status, message: 'Activity successfully deleted'};
             } else {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Could not delete trip.');
+                return {status: response.status, message: 'Could not delete activity.'};
             }
         } catch(error) {
             console.error('Error during deleting a trip', error);

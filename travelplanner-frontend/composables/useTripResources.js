@@ -6,7 +6,7 @@ import {Trip} from "~/model/trip";
 export const useTripResources = () => {
     const baseUrl = environmentAPI.baseUrl;
 
-    const urlTrip = `${baseUrl}/${apiPaths.trips}`;
+    const urlTrip = `${baseUrl}/${apiPaths.trips}?pageNumber=1&pageSize=5`;
 
     const getTrip = async () => {
         try {
@@ -20,10 +20,23 @@ export const useTripResources = () => {
         }
     };
 
-
-    const postTrip = async (credentials) => {
+    const getTripByUserId = async (userId) => {
         try {
-            const response = await fetch(urlTrip, requestOptionsHelper.post(credentials));
+            const urlTripById = `${baseUrl}/${apiPaths.trips}/user/${userId}?pageNumber=1&pageSize=5`;
+            const response = await fetch(urlTripById, requestOptionsHelper.get);
+            const data = await response.json();
+
+            return data.map(item => new Trip(item));
+        } catch (error) {
+            console.error('Error during getting trips', error);
+            throw error;
+        }
+    };
+
+
+    const postTrip = async (payload) => {
+        try {
+            const response = await fetch(urlTrip, requestOptionsHelper.post(payload));
             if (response.ok) {
                 return {status: response.status, message: 'Trips successfully created'};
             } else {
@@ -35,9 +48,10 @@ export const useTripResources = () => {
         }
     }
 
-    const putTrip = async (credentials) => {
+    const putTrip = async (credentials, tripId) => {
         try {
-            const response = await fetch(urlTrip, requestOptionsHelper.put(credentials));
+            const urlTripWithId = `${baseUrl}/${apiPaths.trips}/${tripId}`
+            const response = await fetch(urlTripWithId, requestOptionsHelper.put(credentials));
             if (response.ok) {
                 return {status: response.status, message: 'Trip successfully updated'};
             } else {
@@ -49,15 +63,14 @@ export const useTripResources = () => {
         }
     }
 
-    const deleteTrip = async () => {
+    const deleteTrip = async (tripId) => {
         try {
-            const response = await fetch(urlTrip, requestOptionsHelper.del);
+            const urlTripWithId = `${baseUrl}/${apiPaths.trips}/${tripId}`
+            const response = await fetch(urlTripWithId, requestOptionsHelper.del);
             if (response.ok) {
-                const data = response.json();
-                console.log(data);
+                return {status: response.status, message: 'Trip succesfully deleted'};
             } else {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Could not delete trip.');
+                return {status: response.status, message: 'Could not delete a trip.'};
             }
         } catch(error) {
             console.error('Error during deleting a trip', error);
@@ -67,6 +80,7 @@ export const useTripResources = () => {
 
     return{
         getTrip,
+        getTripByUserId,
         postTrip,
         putTrip,
         deleteTrip

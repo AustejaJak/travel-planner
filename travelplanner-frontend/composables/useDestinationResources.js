@@ -17,7 +17,6 @@ export const useDestinationResources = (tripId) => {
         }
     };
 
-
     const postDestination = async (credentials) => {
         try {
             const response = await fetch(urlDestination, requestOptionsHelper.post(credentials));
@@ -32,9 +31,10 @@ export const useDestinationResources = (tripId) => {
         }
     }
 
-    const putDestination = async (credentials) => {
+    const putDestination = async (credentials, destinationId) => {
         try {
-            const response = await fetch(urlDestination, requestOptionsHelper.put(credentials));
+            const destinationWithIdUrl = `http://localhost:5207/api/v1/trips/${tripId}/destinations/${destinationId}`;
+            const response = await fetch(destinationWithIdUrl, requestOptionsHelper.put(credentials));
             if (response.ok) {
                 return {status: response.status, message: 'Trip successfully updated'};
             } else {
@@ -46,15 +46,14 @@ export const useDestinationResources = (tripId) => {
         }
     }
 
-    const deleteDestination= async () => {
+    const deleteDestination = async (tripId, destinationId) => {
         try {
-            const response = await fetch(urlDestination, requestOptionsHelper.del);
+            const destinationWithIdUrl = `http://localhost:5207/api/v1/trips/${tripId}/destinations/${destinationId}`;
+            const response = await fetch(destinationWithIdUrl, requestOptionsHelper.del);
             if (response.ok) {
-                const data = response.json();
-                console.log(data);
+                return {status: response.status, message: 'Destination successfully deleted'};
             } else {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Could not delete trip.');
+                return {status: response.status, message: 'Could not delete a destination.'};
             }
         } catch(error) {
             console.error('Error during deleting a trip', error);

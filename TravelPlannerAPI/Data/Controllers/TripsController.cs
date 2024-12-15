@@ -50,6 +50,41 @@ public class TripsController : ControllerBase
 
         return Ok(trips);
     }
+    
+    // GET: api/v1/trips/user/{userId}
+    [HttpGet("user/{userId}", Name = "GetTripsByUser")]
+    [Authorize]
+    public async Task<IActionResult> GetTripsByUser(string userId, [FromQuery] SearchParameters searchParameters, LinkGenerator linkGenerator)
+    {
+        if (userId == string.Empty)
+        {
+            return BadRequest("Invalid user ID.");
+        }
+        
+        var queryable = _dbContext.Trips
+            .Where(trip => trip.UserId == userId)
+            .OrderBy(o => o.CreationDate);
+        
+        var pagedList = await PagedList<Trip>.CreateAsync(queryable, searchParameters.PageNumber!.Value, searchParameters.PageSize!.Value);
+        
+        var previousPageLink = pagedList.HasPrevious
+            ? linkGenerator.GetUriByName(HttpContext, "GetTripsByUser", new { userId = userId, pageNumber = searchParameters.PageNumber - 1, pageSize = searchParameters.PageSize })
+            : null;
+
+        var nextPageLink = pagedList.HasNext
+            ? linkGenerator.GetUriByName(HttpContext, "GetTripsByUser", new { userId = userId, pageNumber = searchParameters.PageNumber + 1, pageSize = searchParameters.PageSize })
+            : null;
+
+        var paginationMetadata = new PaginationMetadata(pagedList.TotalCount, pagedList.PageSize, pagedList.CurrentPage, pagedList.TotalPages, previousPageLink, nextPageLink);
+
+        HttpContext.Response.Headers.Append("Pagination", JsonSerializer.Serialize(paginationMetadata));
+        
+        var trips = pagedList.Select(trip => new TripDtoInitial(
+            trip.Id, trip.Name, trip.Description, trip.Url, trip.TripStart, trip.TripEnd, trip.CreationDate)).ToList();
+
+        return Ok(trips);
+    }
+
 
     // GET: api/v1/trips/{tripId}
     [HttpGet("{tripId}", Name = "GetTrip")]
