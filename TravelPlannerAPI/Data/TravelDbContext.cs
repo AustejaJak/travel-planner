@@ -18,7 +18,15 @@ public class TravelDbContext : IdentityDbContext<TravelMember>
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySql(_configuration.GetConnectionString("MySQL"),
-        new MySqlServerVersion(new Version(9, 0, 1)));
+        optionsBuilder.UseMySql(
+            _configuration.GetConnectionString("MySQL"),
+            new MySqlServerVersion(new Version(9, 0, 1)),
+            options => options.EnableRetryOnFailure(
+                maxRetryCount: 5, 
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorNumbersToAdd: null
+            )
+        );
     }
+
 }
