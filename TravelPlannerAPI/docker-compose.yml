@@ -3,10 +3,10 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin-container
     environment:
-      - PMA_HOST=db-mysql-fra1-73819-do-user-18544182-0.h.db.ondigitalocean.com # Replace with your hosted DB hostname
+      - PMA_HOST= # Replace with your hosted DB hostname
       - PMA_PORT=25060
       - PMA_USER=doadmin                             # Replace with the correct username if needed
-      - PMA_PASSWORD=AVNS_pEY5LM3bBbBUz4yiu3w     # Replace with the correct password
+      - PMA_PASSWORD=     # Replace with the correct password
     ports:
       - "8080:80"
     networks:
