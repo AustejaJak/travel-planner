@@ -4,7 +4,7 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-COPY source/travelplanner/TravelPlannerAPI .
+COPY /travelplanner/TravelPlannerAPI .
 
 RUN dotnet restore
 
