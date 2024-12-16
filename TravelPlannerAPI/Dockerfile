@@ -3,18 +3,16 @@
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+
 WORKDIR /src
-COPY ["TravelPlannerAPI.csproj", "./"]
-RUN dotnet restore "TravelPlannerAPI.csproj"
-COPY . .
-WORKDIR "/src/"
-RUN dotnet build "TravelPlannerAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "TravelPlannerAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY source/travelplanner/TravelPlannerAPI .
 
-FROM base AS final
+RUN dotnet restore
+
+RUN dotnet publish -c  -o out
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:6c4df091e4e531bb93bdbfe7e7f0998e7ced344f54426b7e874116a3dc3233ff
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "TravelPlannerAPI.dll"]
